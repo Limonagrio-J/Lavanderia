@@ -1,0 +1,49 @@
+@model IEnumerable<PrototipoCRUD.Models.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<h1>Clientes</h1>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+<p><a class="btn btn-primary" asp-action="Create">Nuevo cliente</a></p>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Todavía no hay clientes registrados. Usa "Nuevo cliente" para agregar el primero.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre completo</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Dirección</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Documento</td>
+                <td>@c.Nombre @c.Apellido</td>
+                <td>@c.Telefono</td>
+                <td>@c.Correo</td>
+                <td>@c.Direccion</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@c.Id">Editar</a>
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@c.Id">Dar de baja</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
