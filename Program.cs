@@ -1,16 +1,30 @@
+using PrototipoCRUD.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<PrototipoCRUD.Data.ClienteDAO>();
+builder.Services.AddScoped<ClienteDAO>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Crea la tabla "clientes" (y las columnas nuevas) si aún no existen.
+// Si la base de datos no responde, la aplicación igual abre y muestra un aviso amable.
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        scope.ServiceProvider.GetRequiredService<ClienteDAO>().AsegurarEstructura();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex,
+            "No se pudo preparar la base de datos. Revisa que PostgreSQL esté encendido y la cadena de conexión 'Pepokita' en appsettings.json.");
+    }
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -23,8 +37,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Cliente}/{action=Index}/{id?}")
+    pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

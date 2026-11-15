@@ -33,9 +33,7 @@ C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\s
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\scopedcss\projectbundle\PrototipoCRUD.bundle.scp.css
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\4ys5loznqg-{0}-tchfgznwy8-tchfgznwy8.gz
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\7dxo5rg3pp-{0}-6qvop86g77-6qvop86g77.gz
-C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\63kvfarkl7-{0}-lugek5hnai-lugek5hnai.gz
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\zxg64qs15i-{0}-61n19gt1b8-61n19gt1b8.gz
-C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\ua8heqgisj-{0}-fr7q2aak1r-fr7q2aak1r.gz
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\2e0humksfe-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\jqb0sk2qqz-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\am3fp15ime-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -110,3 +108,7 @@ C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\r
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\PrototipoCRUD.pdb
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\PrototipoCRUD.genruntimeconfig.cache
 C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\ref\PrototipoCRUD.dll
+C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\PrototipoCRUD.sourcelink.json
+C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\63kvfarkl7-{0}-eo65cd1axm-eo65cd1axm.gz
+C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\psazuk1mv4-{0}-fceunvh1ye-fceunvh1ye.gz
+C:\Users\msi\Downloads\PrototipoCRUD_corregido\PrototipoCRUD\obj\Debug\net10.0\compressed\ua8heqgisj-{0}-thwawcz87o-thwawcz87o.gz

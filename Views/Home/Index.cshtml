@@ -1,8 +1,34 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Panel principal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Lavandería Pepokita</p>
+        <h1>Panel principal</h1>
+    </div>
+</header>
+
+@if (ViewBag.ErrorBD != null)
+{
+    <p class="alert" role="alert">@ViewBag.ErrorBD</p>
+}
+
+<div class="cards">
+    <div class="card">
+        <strong>@ViewBag.Activos</strong>
+        <span>Clientes activos</span>
+    </div>
+    <div class="card">
+        <strong>@ViewBag.NuevosMes</strong>
+        <span>Clientes nuevos este mes</span>
+    </div>
 </div>
+
+<p class="section-title">Accesos rápidos</p>
+<a class="primary-button" asp-controller="Cliente" asp-action="Index">Ir a Clientes</a>
+
+<p class="description note">
+    Los demás módulos (Vehículos, Servicios, Órdenes, Inventario, Pagos, Reportes y Empleados)
+    se habilitarán en próximas versiones.
+</p>

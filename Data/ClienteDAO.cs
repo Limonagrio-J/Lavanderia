@@ -8,7 +8,7 @@ namespace PrototipoCRUD.Data
         private readonly string _cadenaConexion;
 
         private const string Columnas =
-            "id, documento, nombre, apellido, telefono, correo, direccion, activo";
+            "id, documento, nombre, apellido, telefono, correo, direccion, activo, tipo_cliente, fecha_registro";
 
         public ClienteDAO(IConfiguration configuracion)
         {
@@ -16,11 +16,35 @@ namespace PrototipoCRUD.Data
                 ?? throw new InvalidOperationException("Falta la cadena de conexión 'Pepokita'.");
         }
 
+        // Crea la tabla si no existe y agrega las columnas nuevas (tipo y fecha de registro)
+        public void AsegurarEstructura()
+        {
+            const string sql = @"
+                CREATE TABLE IF NOT EXISTS clientes (
+                    id        SERIAL PRIMARY KEY,
+                    documento VARCHAR(20)  NOT NULL UNIQUE,
+                    nombre    VARCHAR(80)  NOT NULL,
+                    apellido  VARCHAR(80)  NOT NULL,
+                    telefono  VARCHAR(20)  NOT NULL,
+                    correo    VARCHAR(120),
+                    direccion TEXT,
+                    activo    BOOLEAN      NOT NULL DEFAULT TRUE
+                );
+                ALTER TABLE clientes ADD COLUMN IF NOT EXISTS tipo_cliente VARCHAR(20) NOT NULL DEFAULT 'Particular';
+                ALTER TABLE clientes ADD COLUMN IF NOT EXISTS fecha_registro DATE NOT NULL DEFAULT CURRENT_DATE;";
+            using var conexion = new NpgsqlConnection(_cadenaConexion);
+            conexion.Open();
+            using var comando = new NpgsqlCommand(sql, conexion);
+            comando.ExecuteNonQuery();
+        }
+
         // CREATE
         public void Insertar(Cliente c)
         {
-            const string sql = @"INSERT INTO clientes (documento, nombre, apellido, telefono, correo, direccion)
-                                 VALUES (@documento, @nombre, @apellido, @telefono, @correo, @direccion)";
+            const string sql = @"INSERT INTO clientes
+                                    (documento, nombre, apellido, telefono, correo, direccion, tipo_cliente, fecha_registro)
+                                 VALUES
+                                    (@documento, @nombre, @apellido, @telefono, @correo, @direccion, @tipo, @fecha)";
             using var conexion = new NpgsqlConnection(_cadenaConexion);
             conexion.Open();
             using var comando = new NpgsqlCommand(sql, conexion);
@@ -61,7 +85,8 @@ namespace PrototipoCRUD.Data
         {
             const string sql = @"UPDATE clientes
                                  SET documento = @documento, nombre = @nombre, apellido = @apellido,
-                                     telefono = @telefono, correo = @correo, direccion = @direccion
+                                     telefono = @telefono, correo = @correo, direccion = @direccion,
+                                     tipo_cliente = @tipo, fecha_registro = @fecha
                                  WHERE id = @id";
             using var conexion = new NpgsqlConnection(_cadenaConexion);
             conexion.Open();
@@ -94,6 +119,22 @@ namespace PrototipoCRUD.Data
             return Convert.ToInt64(comando.ExecuteScalar()) > 0;
         }
 
+        // Datos para el Panel principal
+        public (int Activos, int NuevosMes) Resumen()
+        {
+            const string sql = @"SELECT
+                                    COUNT(*) FILTER (WHERE activo),
+                                    COUNT(*) FILTER (WHERE activo
+                                        AND date_trunc('month', fecha_registro) = date_trunc('month', CURRENT_DATE))
+                                 FROM clientes";
+            using var conexion = new NpgsqlConnection(_cadenaConexion);
+            conexion.Open();
+            using var comando = new NpgsqlCommand(sql, conexion);
+            using var lector = comando.ExecuteReader();
+            lector.Read();
+            return ((int)lector.GetInt64(0), (int)lector.GetInt64(1));
+        }
+
         private static void AgregarParametros(NpgsqlCommand comando, Cliente c)
         {
             comando.Parameters.AddWithValue("documento", c.Documento);
@@ -104,6 +145,8 @@ namespace PrototipoCRUD.Data
                 string.IsNullOrWhiteSpace(c.Correo) ? DBNull.Value : c.Correo);
             comando.Parameters.AddWithValue("direccion",
                 string.IsNullOrWhiteSpace(c.Direccion) ? DBNull.Value : c.Direccion);
+            comando.Parameters.AddWithValue("tipo", c.TipoCliente);
+            comando.Parameters.AddWithValue("fecha", c.FechaRegistro);
         }
 
         private static Cliente Mapear(NpgsqlDataReader r) => new Cliente
@@ -115,7 +158,9 @@ namespace PrototipoCRUD.Data
             Telefono = r.GetString(4),
             Correo = r.IsDBNull(5) ? null : r.GetString(5),
             Direccion = r.IsDBNull(6) ? null : r.GetString(6),
-            Activo = r.GetBoolean(7)
+            Activo = r.GetBoolean(7),
+            TipoCliente = r.GetString(8),
+            FechaRegistro = r.GetFieldValue<DateOnly>(9)
         };
     }
 }

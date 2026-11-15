@@ -1,31 +1,33 @@
-@model IEnumerable<PrototipoCRUD.Models.Cliente>
+@using System.Globalization
+@model List<PrototipoCRUD.Models.Cliente>
 @{
     ViewData["Title"] = "Clientes";
+    var inv = CultureInfo.InvariantCulture;
 }
 
-<h1>Clientes</h1>
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Lavandería Pepokita</p>
+        <h1>Clientes</h1>
+    </div>
+    <button class="primary-button" id="open-button" type="button">+ Nuevo cliente</button>
+</header>
 
-@if (TempData["Mensaje"] != null)
+@if (ViewBag.ErrorBD != null)
 {
-    <div class="alert alert-success">@TempData["Mensaje"]</div>
+    <p class="alert" role="alert">@ViewBag.ErrorBD</p>
 }
 
-<p><a class="btn btn-primary" asp-action="Create">Nuevo cliente</a></p>
-
-@if (!Model.Any())
-{
-    <p class="text-muted">Todavía no hay clientes registrados. Usa "Nuevo cliente" para agregar el primero.</p>
-}
-else
-{
-    <table class="table table-striped">
+<div class="table-wrap">
+    <table>
         <thead>
             <tr>
+                <th>Nombre</th>
                 <th>Documento</th>
-                <th>Nombre completo</th>
                 <th>Teléfono</th>
                 <th>Correo</th>
-                <th>Dirección</th>
+                <th>Tipo</th>
+                <th>Registro</th>
                 <th></th>
             </tr>
         </thead>
@@ -33,17 +35,154 @@ else
         @foreach (var c in Model)
         {
             <tr>
+                <td>@c.NombreCompleto</td>
                 <td>@c.Documento</td>
-                <td>@c.Nombre @c.Apellido</td>
                 <td>@c.Telefono</td>
-                <td>@c.Correo</td>
-                <td>@c.Direccion</td>
-                <td class="text-end">
-                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@c.Id">Editar</a>
-                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@c.Id">Dar de baja</a>
+                <td>@(string.IsNullOrWhiteSpace(c.Correo) ? "—" : c.Correo)</td>
+                <td>@c.TipoCliente</td>
+                <td>@c.FechaRegistro.ToString("dd/MM/yyyy", inv)</td>
+                <td class="actions">
+                    <button type="button" class="link-button js-edit"
+                            data-id="@c.Id"
+                            data-nombre="@c.Nombre"
+                            data-apellido="@c.Apellido"
+                            data-documento="@c.Documento"
+                            data-telefono="@c.Telefono"
+                            data-correo="@c.Correo"
+                            data-direccion="@c.Direccion"
+                            data-tipo="@c.TipoCliente"
+                            data-fecha="@c.FechaRegistro.ToString("yyyy-MM-dd", inv)">Editar</button>
+                    <button type="button" class="link-button link-button--danger js-baja"
+                            data-id="@c.Id" data-nombre="@c.NombreCompleto">Dar de baja</button>
                 </td>
             </tr>
         }
         </tbody>
     </table>
+    @if (!Model.Any())
+    {
+        <p class="empty">Aún no hay clientes. Presiona «+ Nuevo cliente» para registrar el primero.</p>
+    }
+</div>
+
+<!-- ============ Diálogo modal: Nuevo / Editar cliente ============ -->
+<section class="dialog-backdrop" id="dialog" role="dialog" aria-modal="true"
+         aria-labelledby="dialog-title" aria-describedby="dialog-description" hidden>
+    <form class="dialog" id="client-form" asp-controller="Cliente" asp-action="Guardar" method="post" novalidate>
+        <input type="hidden" name="Id" value="0">
+
+        <header class="dialog-heading">
+            <div>
+                <p class="eyebrow" id="dialog-eyebrow">Nuevo registro</p>
+                <h2 id="dialog-title">Agregar cliente</h2>
+                <p class="description" id="dialog-description">
+                    Completa los datos principales. Puedes editarlos más adelante.
+                </p>
+            </div>
+            <button class="close-button" id="close-button" type="button" aria-label="Cerrar formulario">×</button>
+        </header>
+
+        <div class="form-grid">
+            <label>
+                <span>Nombre</span>
+                <input name="Nombre" type="text" autocomplete="given-name" maxlength="80"
+                       placeholder="Ej.: María" aria-describedby="error-Nombre">
+                <span class="error" id="error-Nombre" role="alert"></span>
+            </label>
+
+            <label>
+                <span>Apellido</span>
+                <input name="Apellido" type="text" autocomplete="family-name" maxlength="80"
+                       placeholder="Ej.: Quispe" aria-describedby="error-Apellido">
+                <span class="error" id="error-Apellido" role="alert"></span>
+            </label>
+
+            <label>
+                <span>Documento de identidad</span>
+                <input name="Documento" type="text" maxlength="20"
+                       placeholder="Ej.: 10658776" aria-describedby="error-Documento">
+                <span class="error" id="error-Documento" role="alert"></span>
+            </label>
+
+            <label>
+                <span>Teléfono</span>
+                <input name="Telefono" type="tel" autocomplete="tel" maxlength="20"
+                       placeholder="Ej.: 784 455 11" aria-describedby="error-Telefono">
+                <span class="error" id="error-Telefono" role="alert"></span>
+            </label>
+
+            <label class="wide-field">
+                <span>Correo electrónico (opcional)</span>
+                <input name="Correo" type="email" autocomplete="email" maxlength="120"
+                       placeholder="Ej.: maria@correo.com" aria-describedby="error-Correo">
+                <span class="error" id="error-Correo" role="alert"></span>
+            </label>
+
+            <label class="wide-field">
+                <span>Dirección (opcional)</span>
+                <input name="Direccion" type="text" autocomplete="street-address" maxlength="200"
+                       placeholder="Ej.: Barrio Avaroa, calle principal" aria-describedby="error-Direccion">
+                <span class="error" id="error-Direccion" role="alert"></span>
+            </label>
+
+            <label>
+                <span>Tipo de cliente</span>
+                <select name="TipoCliente" aria-describedby="error-TipoCliente">
+                    <option value="Particular" selected>Particular</option>
+                    <option value="Frecuente">Frecuente</option>
+                    <option value="Empresa">Empresa</option>
+                </select>
+                <span class="error" id="error-TipoCliente" role="alert"></span>
+            </label>
+
+            <label>
+                <span>Fecha de registro</span>
+                <input name="FechaRegistro" type="date" aria-describedby="error-FechaRegistro">
+                <span class="error" id="error-FechaRegistro" role="alert"></span>
+            </label>
+
+            <p class="summary" id="summary" role="alert"></p>
+        </div>
+
+        <footer class="dialog-actions">
+            <span class="shortcuts">Enter o Ctrl+S: guardar · Esc: cancelar</span>
+            <button class="secondary-button" id="cancel-button" type="button">Cancelar</button>
+            <button class="primary-button" id="submit-button" type="submit">Guardar cliente</button>
+        </footer>
+    </form>
+
+    <!-- Confirmación al cancelar con datos escritos -->
+    <div class="confirm" id="confirm" role="alertdialog" aria-modal="true"
+         aria-labelledby="confirm-title" aria-describedby="confirm-text" hidden>
+        <div class="confirm-card">
+            <h3 id="confirm-title">¿Salir sin guardar?</h3>
+            <p id="confirm-text">Escribiste información que todavía no se ha guardado. Si sales ahora, se perderá.</p>
+            <div class="confirm-actions">
+                <button class="secondary-button" id="discard-button" type="button">Salir sin guardar</button>
+                <button class="primary-button" id="keep-button" type="button">Seguir editando</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Confirmación de baja (baja lógica) ============ -->
+<section class="dialog-backdrop" id="baja" role="alertdialog" aria-modal="true"
+         aria-labelledby="baja-title" aria-describedby="baja-text" hidden>
+    <div class="confirm-card">
+        <h3 id="baja-title">¿Dar de baja a este cliente?</h3>
+        <p id="baja-text">
+            <strong id="baja-name"></strong> dejará de aparecer en la lista, pero su historial se conserva.
+        </p>
+        <form id="baja-form" asp-controller="Cliente" asp-action="DarDeBaja" method="post">
+            <input type="hidden" name="id" id="baja-id" value="0">
+            <div class="confirm-actions">
+                <button class="primary-button" id="baja-cancel" type="button">Cancelar</button>
+                <button class="secondary-button" id="baja-confirm" type="submit">Sí, dar de baja</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/clientes.js" asp-append-version="true"></script>
 }
