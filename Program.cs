@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ClienteDAO>();
+builder.Services.AddScoped<VentaDAO>();
 
 var app = builder.Build();
 
@@ -14,6 +15,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         scope.ServiceProvider.GetRequiredService<ClienteDAO>().AsegurarEstructura();
+        scope.ServiceProvider.GetRequiredService<VentaDAO>().AsegurarEstructura();
     }
     catch (Exception ex)
     {
@@ -28,7 +30,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (app.Urls.Any(url => url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
+{
+    app.UseHttpsRedirection();
+}
 app.UseRouting();
 
 app.UseAuthorization();

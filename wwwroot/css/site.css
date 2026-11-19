@@ -559,3 +559,144 @@ a.primary-button {
     padding: 16px;
   }
 }
+
+/* ================= Módulo de Ventas ================= */
+.venta-panel {
+  margin-bottom: 18px;
+  padding: 20px 22px;
+  background: #fff8f8;
+  border: 1px solid #cbd5d2;
+  border-radius: 12px;
+}
+
+.venta-head {
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: end;
+}
+
+.venta-add {
+  grid-template-columns: 3fr 1fr auto;
+  align-items: end;
+}
+
+.venta-total {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+  font-size: 11px;
+}
+
+.venta-total strong {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.venta-panel input[readonly] {
+  background: #e9efed;
+}
+
+.num {
+  text-align: right;
+}
+
+tfoot td {
+  border-top: 1px solid #cbd5d2;
+}
+
+.venta-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.venta-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+#venta-error {
+  margin: 0 0 12px;
+}
+
+@media (max-width: 800px) {
+  .venta-head,
+  .venta-add {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-total {
+    text-align: left;
+  }
+}
+
+/* ---------- Historial de compras ---------- */
+.historial-filtros {
+  grid-template-columns: 2fr 1fr 1fr auto;
+  align-items: end;
+  margin-bottom: 26px;
+}
+
+.historial-botones {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.historial-bloque {
+  margin-bottom: 28px;
+}
+
+.historial-hint {
+  color: #667a77;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.historial-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.venta-item {
+  background: #fff8f8;
+  border: 1px solid #cbd5d2;
+  border-radius: 12px;
+}
+
+.venta-item summary {
+  display: grid;
+  grid-template-columns: 110px 140px 1fr 100px 130px;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 16px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.venta-item__num {
+  font-weight: 600;
+}
+
+.venta-item__total {
+  text-align: right;
+  font-weight: 600;
+}
+
+.venta-item__detalle {
+  border: 0;
+  border-top: 1px solid #cbd5d2;
+  border-radius: 0 0 12px 12px;
+}
+
+@media (max-width: 800px) {
+  .historial-filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-item summary {
+    grid-template-columns: 1fr 1fr;
+  }
+}

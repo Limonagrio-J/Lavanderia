@@ -1,0 +1,194 @@
+@using System.Globalization
+@model PrototipoCRUD.Models.HistorialViewModel
+@{
+    ViewData["Title"] = "Historial de compras";
+    var inv = CultureInfo.InvariantCulture;
+    var hayFiltros = Model.Desde.HasValue || Model.Hasta.HasValue || Model.IdCliente > 0;
+    var porCliente = Model.PorCliente;
+    var porProducto = Model.PorProducto;
+}
+
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Autolavado</p>
+        <h1>Historial de compras</h1>
+    </div>
+    <a class="primary-button" asp-controller="Venta" asp-action="Registrar">+ Nueva venta</a>
+</header>
+
+@if (ViewBag.ErrorBD != null)
+{
+    <p class="alert" role="alert">@ViewBag.ErrorBD</p>
+}
+
+<!-- ============ Resumen ============ -->
+<div class="cards">
+    <div class="card">
+        <strong>@Model.Ventas.Count</strong>
+        <span>Ventas realizadas</span>
+    </div>
+    <div class="card">
+        <strong>Bs. @Model.Ingresos.ToString("N2", inv)</strong>
+        <span>Ingresos totales</span>
+    </div>
+    <div class="card">
+        <strong>Bs. @Model.TicketPromedio.ToString("N2", inv)</strong>
+        <span>Promedio por venta</span>
+    </div>
+    <div class="card">
+        <strong>@Model.Unidades</strong>
+        <span>Productos / servicios vendidos</span>
+    </div>
+</div>
+
+<!-- ============ Filtros ============ -->
+<form method="get" asp-controller="Venta" asp-action="Historial" class="venta-panel form-grid historial-filtros">
+    <label>
+        <span>Cliente</span>
+        <select name="cliente">
+            <option value="0" selected="@(Model.IdCliente == 0)">Todos los clientes</option>
+            @foreach (var c in Model.ClientesFiltro)
+            {
+                <option value="@c.Id" selected="@(Model.IdCliente == c.Id)">@c.NombreCompleto — @c.Documento</option>
+            }
+        </select>
+    </label>
+    <label>
+        <span>Desde</span>
+        <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd", inv))">
+    </label>
+    <label>
+        <span>Hasta</span>
+        <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd", inv))">
+    </label>
+    <div class="historial-botones">
+        <button class="primary-button" type="submit">Filtrar</button>
+        @if (hayFiltros)
+        {
+            <a class="secondary-button" asp-controller="Venta" asp-action="Historial">Limpiar</a>
+        }
+    </div>
+</form>
+
+@if (Model.Ventas.Count == 0)
+{
+    <div class="table-wrap">
+        <p class="empty">
+            @(hayFiltros ? "No hay compras que coincidan con los filtros." : "Aún no hay ventas registradas.")
+        </p>
+    </div>
+}
+else
+{
+    <!-- ============ Totales por cliente ============ -->
+    <p class="section-title">Compras por cliente</p>
+    <div class="table-wrap historial-bloque">
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Documento</th>
+                    <th class="num">Compras</th>
+                    <th class="num">Total comprado</th>
+                    <th>Última compra</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var r in porCliente)
+            {
+                <tr>
+                    <td>@r.Cliente</td>
+                    <td>@r.Documento</td>
+                    <td class="num">@r.Compras</td>
+                    <td class="num">Bs. @r.Total.ToString("N2", inv)</td>
+                    <td>@r.UltimaCompra.ToString("dd/MM/yyyy HH:mm", inv)</td>
+                    <td class="actions">
+                        <a class="link-button" asp-controller="Venta" asp-action="Historial"
+                           asp-route-cliente="@r.IdCliente"
+                           asp-route-desde="@(Model.Desde?.ToString("yyyy-MM-dd", inv))"
+                           asp-route-hasta="@(Model.Hasta?.ToString("yyyy-MM-dd", inv))">Ver compras</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ============ Movimiento por producto (control de inventario) ============ -->
+    <p class="section-title">Movimiento por producto</p>
+    <div class="table-wrap historial-bloque">
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto / servicio</th>
+                    <th class="num">Unidades vendidas</th>
+                    <th class="num">En # ventas</th>
+                    <th class="num">Ingresos</th>
+                    <th class="num">% de ingresos</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var p in porProducto)
+            {
+                <tr>
+                    <td>@p.Producto</td>
+                    <td class="num">@p.Unidades</td>
+                    <td class="num">@p.Ventas</td>
+                    <td class="num">Bs. @p.Ingresos.ToString("N2", inv)</td>
+                    <td class="num">@((Model.Ingresos == 0 ? 0m : p.Ingresos * 100m / Model.Ingresos).ToString("0.0", inv)) %</td>
+                </tr>
+            }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td class="num"><strong>@Model.Unidades</strong></td>
+                    <td></td>
+                    <td class="num"><strong>Bs. @Model.Ingresos.ToString("N2", inv)</strong></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- ============ Detalle de cada venta ============ -->
+    <p class="section-title">Detalle de ventas <span class="historial-hint">(toca una venta para ver sus productos)</span></p>
+    <div class="historial-lista">
+    @foreach (var v in Model.Ventas)
+    {
+        <details class="venta-item">
+            <summary>
+                <span class="venta-item__num">Venta #@v.Id</span>
+                <span class="venta-item__fecha">@v.Fecha.ToString("dd/MM/yyyy HH:mm", inv)</span>
+                <span class="venta-item__cliente">@v.Cliente</span>
+                <span class="venta-item__items">@v.Lineas.Sum(l => l.Cantidad) ítem(s)</span>
+                <strong class="venta-item__total">Bs. @v.Total.ToString("N2", inv)</strong>
+            </summary>
+            <div class="table-wrap venta-item__detalle">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th class="num">Cantidad</th>
+                            <th class="num">Precio unitario</th>
+                            <th class="num">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var l in v.Lineas)
+                    {
+                        <tr>
+                            <td>@l.Producto</td>
+                            <td class="num">@l.Cantidad</td>
+                            <td class="num">Bs. @l.PrecioUnitario.ToString("N2", inv)</td>
+                            <td class="num">Bs. @l.Subtotal.ToString("N2", inv)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </details>
+    }
+    </div>
+}
