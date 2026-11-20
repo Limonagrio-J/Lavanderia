@@ -1,0 +1,44 @@
+﻿@model List<PrototipoCRUD.Models.ResumenDescuentoVendedor>
+@using System.Globalization
+@{
+    ViewData["Title"] = "Auditoría de descuentos";
+    var inv = CultureInfo.InvariantCulture;
+}
+
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Autolavado</p>
+        <h1>Auditoría de descuentos</h1>
+    </div>
+</header>
+
+@if (ViewBag.ErrorBD != null)
+{
+    <p class="alert" role="alert">@ViewBag.ErrorBD</p>
+}
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Vendedor</th>
+                <th class="num">Ventas con descuento</th>
+                <th class="num">Total descontado (Bs.)</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Vendedor</td>
+                <td class="num">@r.VentasConDescuento</td>
+                <td class="num">Bs. @r.TotalDescontado.ToString("N2", inv)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <p class="empty">No hay ventas con descuento registradas.</p>
+    }
+</div>

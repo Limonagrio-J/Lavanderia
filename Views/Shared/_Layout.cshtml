@@ -1,23 +1,49 @@
+﻿@using Microsoft.AspNetCore.Http
 @{
     var controlador = ViewContext.RouteData.Values["controller"]?.ToString();
+    var usuario = Context.Session.GetString("UsuarioNombre");
+    var nombreCompleto = Context.Session.GetString("NombreCompleto") ?? usuario;
+    var rol = Context.Session.GetString("Rol") ?? string.Empty;
+    bool puedeAuditoria = rol == "Administrador" || rol == "Gerente";
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] – Lavandería Pepokita</title>
+    <title>@ViewData["Title"] - Autolavado</title>
     <link rel="icon" href="~/favicon.ico">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
 </head>
 <body>
     <div class="app">
-        <!-- Menú fijo: ~20% de la pantalla -->
         <aside class="sidebar">
-            <p class="brand"><small>Sistema</small>Lavandería<br>Pepokita</p>
+            <p class="brand"><small>Sistema de</small>Autolavado</p>
+
+            @if (!string.IsNullOrWhiteSpace(usuario))
+            {
+                <div class="user-box">
+                    <div class="user-name">@nombreCompleto</div>
+                    <div class="user-role">@rol</div>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="link-button">Cerrar sesión</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <a class="nav-link @(controlador == "Account" ? "active" : "")" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            }
 
             <a class="nav-link @(controlador == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">Panel principal</a>
             <a class="nav-link @(controlador == "Cliente" ? "active" : "")" asp-controller="Cliente" asp-action="Index">Clientes</a>
+            <a class="nav-link @(controlador == "Venta" && ViewContext.RouteData.Values["action"]?.ToString() == "Registrar" ? "active" : "")" asp-controller="Venta" asp-action="Registrar">Registrar venta</a>
+            <a class="nav-link @(controlador == "Venta" && ViewContext.RouteData.Values["action"]?.ToString() == "Historial" ? "active" : "")" asp-controller="Venta" asp-action="Historial">Historial</a>
+            @if (puedeAuditoria)
+            {
+                <a class="nav-link @(controlador == "Venta" && ViewContext.RouteData.Values["action"]?.ToString() == "Auditoria" ? "active" : "")" asp-controller="Venta" asp-action="Auditoria">Auditoría</a>
+            }
 
             <span class="nav-link nav-link--soon">Vehículos <small>Pronto</small></span>
             <span class="nav-link nav-link--soon">Servicios <small>Pronto</small></span>
@@ -28,7 +54,6 @@
             <span class="nav-link nav-link--soon">Empleados y roles <small>Pronto</small></span>
         </aside>
 
-        <!-- Área de trabajo: ~80% -->
         <main class="content">
             <div class="page">
                 @RenderBody()
@@ -38,11 +63,11 @@
 
     @if (TempData["Mensaje"] != null)
     {
-        <div class="toast" id="toast" role="status">@TempData["Mensaje"]</div>
+        <div class="toast" id="toast-mensaje" role="status">@TempData["Mensaje"]</div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="toast toast--error" id="toast" role="alert">@TempData["Error"]</div>
+        <div class="toast toast--error" id="toast-error" role="alert">@TempData["Error"]</div>
     }
 
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,0 +1,143 @@
+﻿@using System.Globalization
+@model PrototipoCRUD.Models.Venta
+@{
+    ViewData["Title"] = "Registrar venta";
+    var inv = CultureInfo.InvariantCulture;
+    var productos = (List<PrototipoCRUD.Models.Producto>)ViewBag.Productos;
+    var clientes = (List<PrototipoCRUD.Models.Cliente>)ViewBag.Clientes;
+    var vendedorNombre = ViewBag.VendedorNombre as string ?? "Sin registrar";
+}
+
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Autolavado</p>
+        <h1>Registrar venta</h1>
+    </div>
+</header>
+
+@if (ViewBag.ErrorBD != null)
+{
+    <p class="alert" role="alert">@ViewBag.ErrorBD</p>
+}
+
+<form id="venta-form" asp-controller="Venta" asp-action="Registrar" method="post" novalidate>
+    @Html.AntiForgeryToken()
+    <p class="section-title">Datos de la venta</p>
+    <div class="venta-panel form-grid venta-head">
+        <label>
+            <span>Fecha de la venta</span>
+            <input type="text" id="venta-fecha" value="@Model.Fecha.ToString("dd/MM/yyyy HH:mm", inv)" readonly>
+        </label>
+
+        <label>
+            <span>Vendedor</span>
+            <input type="text" id="venta-vendedor" value="@vendedorNombre" readonly>
+        </label>
+
+        <label>
+            <span>Cliente</span>
+            <select id="venta-cliente">
+                <option value="0" selected>Consumidor Final</option>
+                @foreach (var c in clientes)
+                {
+                    <option value="@c.Id">@c.NombreCompleto - @c.Documento</option>
+                }
+            </select>
+        </label>
+
+        <label>
+            <span>Descuento (%)</span>
+            <input type="number" id="venta-descuento" min="0" max="20" step="0.01" value="0" inputmode="decimal">
+        </label>
+
+        <div class="venta-resumen">
+            <div><span>Subtotal bruto</span> <strong id="lblSubtotal">Bs. 0.00</strong></div>
+            <div><span>Descuento (Bs.)</span> <strong id="lblDescuentoMonto">Bs. 0.00</strong></div>
+            <div class="venta-total-line"><span>Total final</span> <strong id="lblTotal">Bs. 0.00</strong></div>
+        </div>
+    </div>
+
+    <p class="section-title">Productos</p>
+    <div class="venta-panel form-grid venta-add">
+        <label>
+            <span>Producto</span>
+            <select id="item-producto">
+                @if (productos.Count == 0)
+                {
+                    <option value="">No hay productos registrados</option>
+                }
+                else
+                {
+                    <option value="">Selecciona un producto…</option>
+                }
+                @foreach (var p in productos)
+                {
+                    <option value="@p.Id" data-nombre="@p.Nombre" data-precio="@p.Precio.ToString("0.00", inv)">
+                        @p.Nombre - Bs. @p.Precio.ToString("N2", inv)
+                    </option>
+                }
+            </select>
+        </label>
+
+        <label>
+            <span>Cantidad</span>
+            <input type="number" id="item-cantidad" min="1" max="9999" step="1" value="1" inputmode="numeric">
+        </label>
+
+        <button class="primary-button" id="agregar-button" type="button">+ Agregar</button>
+    </div>
+    <p class="summary" id="venta-error" role="alert"></p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th class="num">Cantidad</th>
+                    <th class="num">Precio unitario</th>
+                    <th class="num">Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="detalle-body"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="num"><strong>Subtotal bruto</strong></td>
+                    <td class="num"><strong id="lblSubtotalTabla">Bs. 0.00</strong></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="num"><strong>Descuento</strong></td>
+                    <td class="num"><strong id="lblDescuentoTabla">Bs. 0.00</strong></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="num"><strong>Total final</strong></td>
+                    <td class="num"><strong id="lblTotalTabla">Bs. 0.00</strong></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+        <p class="empty" id="detalle-vacio">Aún no agregaste productos a esta venta.</p>
+    </div>
+
+    <div class="venta-actions">
+        <button class="secondary-button" id="limpiar-button" type="button">Limpiar venta</button>
+        <button class="primary-button" id="confirmar-button" type="submit">Aceptar / Confirmar venta</button>
+    </div>
+</form>
+
+<section class="dialog-backdrop" id="venta-ok" role="alertdialog" aria-modal="true"
+         aria-labelledby="venta-ok-text" hidden>
+    <div class="confirm-card">
+        <h3>Venta registrada</h3>
+        <p id="venta-ok-text"></p>
+        <div class="confirm-actions">
+            <button class="primary-button" id="venta-ok-button" type="button">Nueva venta</button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/ventas.js" asp-append-version="true"></script>
+}

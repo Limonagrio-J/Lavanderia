@@ -45,7 +45,7 @@
         : 'Usa de 5 a 20 caracteres (números o letras, sin espacios). Ej.: 10658776.';
     },
     Telefono(value) {
-      if (!value) return 'Necesitamos un teléfono para avisar cuando la ropa esté lista. Ej.: 78445511.';
+      if (!value) return 'Necesitamos un teléfono para avisar cuando el vehículo esté listo. Ej.: 78445511.';
       if (!/^\+?[\d\s-]+$/.test(value)) {
         return 'Usa solo números (puedes separar con espacios o guiones). Ej.: 784 455 11.';
       }

@@ -1,0 +1,54 @@
+﻿@model List<PrototipoCRUD.Models.VentaHistorial>
+@using System.Globalization
+@{
+    ViewData["Title"] = "Historial de ventas";
+    var inv = CultureInfo.InvariantCulture;
+}
+
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Autolavado</p>
+        <h1>Historial de ventas</h1>
+    </div>
+</header>
+
+@if (ViewBag.ErrorBD != null)
+{
+    <p class="alert" role="alert">@ViewBag.ErrorBD</p>
+}
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th class="num">Subtotal bruto</th>
+                <th class="num">Descuento %</th>
+                <th class="num">Descuento Bs.</th>
+                <th class="num">Total final</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td>@v.Id</td>
+                <td>@v.Fecha.ToString("dd/MM/yyyy HH:mm", inv)</td>
+                <td>@v.Cliente</td>
+                <td>@v.Vendedor</td>
+                <td class="num">Bs. @v.SubtotalBruto.ToString("N2", inv)</td>
+                <td class="num">@v.PorcentajeDescuento.ToString("N2", inv)%</td>
+                <td class="num">Bs. @v.MontoDescuento.ToString("N2", inv)</td>
+                <td class="num">Bs. @v.TotalFinal.ToString("N2", inv)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <p class="empty">Aún no hay ventas registradas.</p>
+    }
+</div>

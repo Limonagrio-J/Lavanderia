@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnUrl = ViewBag.ReturnUrl as string;
+}
+
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Autolavado</p>
+        <h1>Iniciar sesión</h1>
+    </div>
+</header>
+
+<div class="venta-panel" style="max-width:520px;">
+    @if (ViewBag.Error != null)
+    {
+        <p class="summary" style="display:block; margin-bottom:12px;">@ViewBag.Error</p>
+    }
+
+    <form asp-controller="Account" asp-action="Login" method="post" class="form-grid" style="grid-template-columns:1fr;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <label>
+            <span>Usuario</span>
+            <input name="nombreUsuario" type="text" autocomplete="username" required value="@(ViewBag.NombreUsuario ?? string.Empty)" />
+        </label>
+        <label>
+            <span>Contraseña</span>
+            <input name="contrasena" type="password" autocomplete="current-password" required />
+        </label>
+        <div class="dialog-actions" style="padding:0; background:transparent; border:0; justify-content:flex-start;">
+            <button class="primary-button" type="submit">Ingresar</button>
+        </div>
+    </form>
+</div>

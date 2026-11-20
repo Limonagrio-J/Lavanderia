@@ -559,3 +559,128 @@ a.primary-button {
     padding: 16px;
   }
 }
+
+/* ================= Módulo de Ventas ================= */
+.venta-panel {
+  margin-bottom: 18px;
+  padding: 20px 22px;
+  background: #fff8f8;
+  border: 1px solid #cbd5d2;
+  border-radius: 12px;
+}
+
+.venta-head {
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: end;
+}
+
+.venta-add {
+  grid-template-columns: 3fr 1fr auto;
+  align-items: end;
+}
+
+.venta-total {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+  font-size: 11px;
+}
+
+.venta-total strong {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.venta-panel input[readonly] {
+  background: #e9efed;
+}
+
+.num {
+  text-align: right;
+}
+
+tfoot td {
+  border-top: 1px solid #cbd5d2;
+}
+
+.venta-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.venta-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+#venta-error {
+  margin: 0 0 12px;
+}
+
+@media (max-width: 800px) {
+  .venta-head,
+  .venta-add {
+    grid-template-columns: 1fr;
+  }
+
+  .venta-total {
+    text-align: left;
+  }
+}
+
+/* ---- CR-01 descuentos/login/auditoria ---- */
+.summary--warn {
+  color: #b45309;
+}
+
+.user-box {
+  margin: 0 8px 16px;
+  padding: 10px 12px;
+  background: #29423f;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.user-name {
+  font-weight: 600;
+}
+
+.user-role {
+  color: #9fb5b1;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.logout-form {
+  margin-top: 8px;
+}
+
+.logout-form .link-button {
+  color: #fff8f8;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.venta-head {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+}
+
+.venta-resumen {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.venta-resumen > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.venta-total-line strong {
+  font-size: 22px;
+}
