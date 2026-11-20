@@ -1,5 +1,5 @@
 -- OPCIONAL: la aplicación ejecuta esto automáticamente al iniciar.
--- Solo necesitas crear antes la base de datos (por defecto "BD_Pepokita") en pgAdmin o psql.
+-- Solo necesitas crear antes la base de datos (por defecto "Pepokita") en pgAdmin o psql.
 CREATE TABLE IF NOT EXISTS clientes (
     id             SERIAL PRIMARY KEY,
     documento      VARCHAR(20)  NOT NULL UNIQUE,

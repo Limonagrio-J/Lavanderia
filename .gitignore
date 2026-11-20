@@ -1,4 +1,45 @@
-bin/
-obj/
+﻿# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+TestResults/
+publish/
+
+# Visual Studio / VS Code
 .vs/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
 *.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# .NET / NuGet
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.nupkg
+*.snupkg
+
+# OS / temp
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.tmp
+*.bak
+*.swp
+
+# Local environment / secrets
+appsettings.Development.json
+appsettings.Local.json
+*.env
+secrets.json
+
+# Database dumps/backups (sensitive or large)
+*.dump
+*.backup
+*.bak.sql
