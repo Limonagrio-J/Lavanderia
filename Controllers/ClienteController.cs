@@ -141,7 +141,7 @@ namespace PrototipoCRUD.Controllers
 
             // Teléfono
             if (f.Telefono.Length == 0)
-                e["Telefono"] = "Necesitamos un teléfono para avisar cuando la ropa esté lista. Ej.: 78445511.";
+                e["Telefono"] = "Necesitamos un teléfono para avisar cuando el vehículo esté listo. Ej.: 78445511.";
             else if (!Regex.IsMatch(f.Telefono, @"^\+?[\d\s\-]+$"))
                 e["Telefono"] = "Usa solo números (puedes separar con espacios o guiones). Ej.: 784 455 11.";
             else

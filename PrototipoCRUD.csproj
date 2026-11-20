@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -10,4 +10,10 @@
     <PackageReference Include="Npgsql" Version="10.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="PrototipoCRUD.Tests\**" />
+    <Content Remove="PrototipoCRUD.Tests\**" />
+    <EmbeddedResource Remove="PrototipoCRUD.Tests\**" />
+    <None Remove="PrototipoCRUD.Tests\**" />
+  </ItemGroup>
 </Project>
